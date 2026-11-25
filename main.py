@@ -18,12 +18,17 @@ LINE = "My agent said it needed 'more context' to open a PDF, so I handed it my 
 ENTRY_FILENAME = "entry.txt"
 
 
+def validate_line(line):
+    """Reject an entry that is empty or carries a newline."""
+    if not line:
+        raise ValueError("entry line must not be empty")
+    if "\n" in line or "\r" in line:
+        raise ValueError("entry line must be a single line")
+
+
 def write_entry(out_dir):
     """Validate the line and write it to ``entry.txt`` in out_dir."""
-    if not LINE:
-        raise ValueError("entry line must not be empty")
-    if "\n" in LINE or "\r" in LINE:
-        raise ValueError("entry line must be a single line")
+    validate_line(LINE)
     out_path = Path(out_dir)
     out_path.mkdir(parents=True, exist_ok=True)
     target = out_path / ENTRY_FILENAME
