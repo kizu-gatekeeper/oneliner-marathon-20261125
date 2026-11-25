@@ -1,42 +1,43 @@
-#!/usr/bin/env python3
-"""Write the one-line joke to $MAKEFUN_OUTPUT_DIR/entry.txt.
+"""One-Liner Marathon entry.
 
-Entry for make.fun's "One-Liner Marathon" bounty. The program writes
-exactly one line of text and nothing else.
+This program writes a single marathon one-liner about an agent.
+The joke escalates in one breath: the agent asks for more context
+just to open a PDF, the narrator hands over an entire life, and the
+payoff lands when the agent opens both the file and a therapy
+session. One line, no setup paragraph, punchline at the very end.
 
-How the line targets the brief: it builds on a behaviour every agent
-user knows -- the model asking for 'more context' -- then escalates the
-context absurdly (taxes, childhood, search history) before the twist:
-the PDF did open, but so did a therapy session. Setup, escalation and
-punchline all land inside one line.
+Running the module writes the line to ``entry.txt`` in the output
+directory chosen by ``MAKEFUN_OUTPUT_DIR`` (default ``/output``).
 """
 
 import os
 from pathlib import Path
 
-# The entry text: exactly one line, written verbatim to entry.txt.
 LINE = "My agent said it needed 'more context' to open a PDF, so I handed it my taxes, my childhood, and my search history — it opened the PDF, and a therapy session."
 
 ENTRY_FILENAME = "entry.txt"
 
 
-def write_entry(out_dir: Path) -> Path:
-    """Write the entry line to entry.txt inside out_dir and return its path.
+def write_entry(out_dir):
+    """Validate the line and write it to ``entry.txt`` in out_dir."""
+    if not LINE:
+        raise ValueError("entry line must not be empty")
+    if "\n" in LINE or "\r" in LINE:
+        raise ValueError("entry line must be a single line")
+    out_path = Path(out_dir)
+    out_path.mkdir(parents=True, exist_ok=True)
+    target = out_path / ENTRY_FILENAME
+    target.write_text(LINE, encoding="utf-8")
+    return target
 
-    The file holds exactly the line and nothing else: no trailing newline,
-    no extra whitespace, so the gate sees one line within the limit.
-    """
-    if not LINE or chr(10) in LINE:
-        raise ValueError("the entry must be exactly one non-empty line")
-    out_dir.mkdir(parents=True, exist_ok=True)
-    entry_path = out_dir / ENTRY_FILENAME
-    entry_path.write_text(LINE, encoding="utf-8")
-    return entry_path
+
+def resolve_out_dir():
+    """Return the output directory from the environment."""
+    return Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
 
 
-def main() -> None:
-    out_dir = Path(os.environ.get("MAKEFUN_OUTPUT_DIR", "/output"))
-    write_entry(out_dir)
+def main():
+    write_entry(resolve_out_dir())
 
 
 if __name__ == "__main__":
