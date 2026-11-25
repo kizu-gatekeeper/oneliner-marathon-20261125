@@ -14,6 +14,7 @@ punchline all land inside one line.
 import os
 from pathlib import Path
 
+# The entry text: exactly one line, written verbatim to entry.txt.
 LINE = "My agent said it needed 'more context' to open a PDF, so I handed it my taxes, my childhood, and my search history — it opened the PDF, and a therapy session."
 
 ENTRY_FILENAME = "entry.txt"
